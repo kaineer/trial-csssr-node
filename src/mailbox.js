@@ -2,24 +2,38 @@ const mailboxes = {};
 
 import {createSubscriptions} from './subscriptions';
 
+const createPreconditions = (context, next) => {
+  const preconditions = [];
+
   return {
     add(fn) {
-      subscriptions.push(fn);
+      preconditions.push(fn);
     },
-    run(message) {
-      subscriptions.forEach((fn) => fn(message));
+    run(message, index = 0) {
+      if (index >= preconditions.length) {
+        next(message);
+      } else {
+        const precondition = preconditions[index];
+        precondition(
+          message,
+          context,
+          () => this.run(message, index + 1)
+        );
+      }
     }
   };
 };
 
 const createIdentifiedMailbox = (identity) => {
   const subscriptions = createSubscriptions();
-  const preconditions = [];
+  const preconditions = createPreconditions(
+    identity,
+    (message) => subscriptions.run(message)
+  );
 
-  const runSubscriptions = message => subscriptions.run(message);
   const runPreconditions = (message, index = 0) => {
     if (index >= preconditions.length) {
-      runSubscriptions(message);
+      subscriptions.run(message);
     } else {
       const precondition = preconditions[index];
       precondition(message, identity, () => runPreconditions(message, index + 1));
@@ -28,13 +42,13 @@ const createIdentifiedMailbox = (identity) => {
 
   return {
     pre(fn) {
-      preconditions.push(fn);
+      preconditions.add(fn);
     },
     notify(fn) {
       subscriptions.add(fn);
     },
     sendMail(text) {
-      runPreconditions(text);
+      preconditions.run(text);
     }
   };
 };
