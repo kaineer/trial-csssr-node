@@ -10,15 +10,6 @@ const createIdentifiedMailbox = (identity) => {
     (message) => subscriptions.run(message)
   );
 
-  const runPreconditions = (message, index = 0) => {
-    if (index >= preconditions.length) {
-      subscriptions.run(message);
-    } else {
-      const precondition = preconditions[index];
-      precondition(message, identity, () => runPreconditions(message, index + 1));
-    }
-  };
-
   return {
     pre(fn) {
       preconditions.add(fn);
