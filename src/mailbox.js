@@ -1,7 +1,6 @@
 const mailboxes = {};
 
-const createSubscriptions = () => {
-  const subscriptions = [];
+import {createSubscriptions} from './subscriptions';
 
   return {
     add(fn) {
