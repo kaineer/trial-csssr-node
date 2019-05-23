@@ -38,3 +38,27 @@ bobMailbox.pre(function(mail, user, send) {
 ```
 
 На мой взгляд, такая реализация Mailbox даёт больше возможностей пользователям этого класса.
+
+## Доделки по второму доп заданию
+
+1. Вынес в отдельный файл механизм подписок
+
+```javascript
+const subscriptions = createSubscriptions(); // Так создаётся список подписок
+subscriptions.add(function (message) {...}); // Так добавляется новая подписка
+subscriptions.run(message);                  // А вот так они все запускаются
+```
+
+2. Вынес в отдельный файл механизм предусловий
+
+```javascript
+const preconditions = createPreconditions(
+  identity,           // Передаю объект, привязанный к мэйлбоксу
+  (message) => ...    // Указываю, что делать с сообщением, если все предусловия прошли
+);
+
+preconditions.add(function (message, user, send) { ... }); // Добавляю новое предусловие
+preconditions.run(message);                                // Запускаю проверку по всем предусловиям
+```
+
+Больше, вроде, выносить нечего :)
