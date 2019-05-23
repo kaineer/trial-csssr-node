@@ -1,16 +1,16 @@
 const mailboxes = {};
 
-const createMailbox = () => {
+const createIdentifiedMailbox = (identity) => {
   const subscriptions = [];
   const preconditions = [];
 
-  const runSubscriptions = text => subscriptions.forEach(fn => fn(text));
-  const runPreconditions = (text, index = 0) => {
+  const runSubscriptions = message => subscriptions.forEach(fn => fn(message));
+  const runPreconditions = (message, index = 0) => {
     if (index >= preconditions.length) {
-      runSubscriptions(text);
+      runSubscriptions(message);
     } else {
       const precondition = preconditions[index];
-      precondition(text, () => runPreconditions(text, index + 1));
+      precondition(message, identity, () => runPreconditions(message, index + 1));
     }
   };
 
@@ -27,10 +27,12 @@ const createMailbox = () => {
   };
 };
 
-export const Mailbox = name => {
-  if (!mailboxes[name]) {
-    mailboxes[name] = createMailbox();
+export const createMailBoxFactory = (keyFn = (k) => k) => (identity) => {
+  const key = keyFn(identity);
+
+  if (!mailboxes[key]) {
+    mailboxes[key] = createIdentifiedMailbox(identity);
   }
 
-  return mailboxes[name];
+  return mailboxes[key];
 };
