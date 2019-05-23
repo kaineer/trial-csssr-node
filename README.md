@@ -11,6 +11,7 @@
 - [Источник](https://csssr.com/ru/jobs/middle-js-developer)
 - [JSFiddle](https://jsfiddle.net/CSSSR/4d06zs3t/)
 - [Codesandbox](https://codesandbox.io/s/github/kaineer/trial-csssr-node)
+- [Исходная реализация Mailbox](https://github.com/kaineer/trial-csssr-node/blob/138738da4d093be9d9f66c695bda690e49cc49aa/src/mailbox.js)
 
 ## Доделки по первому доп заданию
 
