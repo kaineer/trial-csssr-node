@@ -33,5 +33,4 @@ export const createMailBoxFactory = (keyFn = (k) => k) => {
 
     return mailboxes[key];
   };
-}
-
+};
