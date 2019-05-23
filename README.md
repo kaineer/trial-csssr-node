@@ -8,5 +8,5 @@
 
 2. Какие части кода можно было бы концептуально абстрагировать из реализации Mailbox и сделать их переиспользуемыми? Попробуйте максимально разбить реализацию на переиспользуемые части.
 
-[Источник](https://csssr.com/ru/jobs/middle-js-developer)
-[JSFiddle](https://jsfiddle.net/CSSSR/4d06zs3t/)
+- [Источник](https://csssr.com/ru/jobs/middle-js-developer)
+- [JSFiddle](https://jsfiddle.net/CSSSR/4d06zs3t/)
