@@ -15,8 +15,8 @@ const createIdentifiedMailbox = (identity) => {
     notify(fn) {
       subscriptions.add(fn);
     },
-    sendMail(text) {
-      preconditions.run(text);
+    sendMail(message) {
+      preconditions.run(message);
     }
   };
 };
