@@ -10,3 +10,31 @@
 
 - [Источник](https://csssr.com/ru/jobs/middle-js-developer)
 - [JSFiddle](https://jsfiddle.net/CSSSR/4d06zs3t/)
+- [Codesandbox](https://codesandbox.io/s/github/kaineer/trial-csssr-node)
+
+## Доделки по первому доп заданию
+
+1. Добавил возможность указывать, какую часть аргумента конструктора Mailbox нужно использовать для проверки — создан такой mailbox или ещё нет:
+
+```javascript
+const {createMailboxFactory} = require('./mailbox');
+const Mailbox = createMailboxFactory((user) => user.email);
+
+const firstMailbox = new Mailbox({name: 'Bob', email: 'common@mail.foo'});
+const secondMailbox = new Mailbox({name: 'Alice', email: 'common@mail.foo'});
+
+console.log(firstMailbox === secondMailbox); // => true
+```
+
+2. Добавил возможность использовать объект, используемый при создании Mailbox в pre-хуках:
+
+```javascript
+// Не показывать Бобу сообщения о его дне рождения
+bobMailbox.pre(function(mail, user, send) {
+  if (user.name !== 'Bob' || mail !== 'Bob\'s birthday') {
+    send(mail);
+  }
+});
+```
+
+На мой взгляд, такая реализация Mailbox даёт больше возможностей пользователям этого класса.

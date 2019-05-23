@@ -1,7 +1,8 @@
-const { Mailbox } = require("./mailbox");
+const { createMailBoxFactory } = require("./mailbox");
 const { createConsole } = require("./console");
 
 const console = createConsole();
+const Mailbox = createMailBoxFactory((user) => user.email);
 
 // 1. Реализуйте класс Mailbox
 // Доп. задания:
@@ -9,9 +10,9 @@ const console = createConsole();
 // 3. Какие части кода можно было бы концептуально абстрагировать из реализации Mailbox и сделать их переиспользуемыми? Попробуйте максимально разбить реализацию на переиспользуемые части.
 
 export const runTests = () => {
-  const mailbox = new Mailbox("name");
+  const mailbox = new Mailbox({name: 'Bob', email: 'common@mail.foo'});
 
-  mailbox.pre(function(mail, send) {
+  mailbox.pre(function(mail, name, send) {
     // pre-хуков может быть несколько или не быть совсем. Если хуков несколько, то необходимо чтобы все подтвердили отправку.
     if (mail !== "spam") {
       // если письмо удовлетворяет условию, то только тогда подтверждаем его отправку
@@ -24,13 +25,21 @@ export const runTests = () => {
     console.log("Новое сообщение: " + mail);
   });
 
+  mailbox.pre(function(mail, user, send) {
+    if (user.name !== 'Bob' || mail !== 'Bob\'s birthday') {
+      send(mail);
+    }
+  });
+
   mailbox.sendMail("asdf"); // в консоли ‘Новое сообщение: asdf’. один вызов sendMail должен триггерить один notify-хук строго не больше одного раза
 
   mailbox.sendMail("spam"); // ничего не выводит в консоль, так как pre-hook не допускает отправку такого письма
 
-  const sameMailbox = new Mailbox("name"); // если имя создаваемого mailbox совпадает с уже созданным, то надо вернуть тот же экземпляр
+  mailbox.sendMail("Bob's birthday"); // не должно ничего вывести в консоль
+
+  const sameMailbox = new Mailbox({name: 'Alice', email: 'common@mail.foo'}); // если имя создаваемого mailbox совпадает с уже созданным, то надо вернуть тот же экземпляр
   console.log(mailbox === sameMailbox); // true
 
-  const newMailbox = new Mailbox("newName");
+  const newMailbox = new Mailbox({name: 'John', email: 'separate@mail.foo'});
   console.log(newMailbox !== mailbox); // true
 };
