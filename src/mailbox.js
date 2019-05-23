@@ -1,38 +1,36 @@
-const mailboxes = {};
+import {createSubscriptions} from './subscriptions';
+import {createPreconditions} from './preconditions';
 
 const createIdentifiedMailbox = (identity) => {
-  const subscriptions = [];
-  const preconditions = [];
-
-  const runSubscriptions = message => subscriptions.forEach(fn => fn(message));
-  const runPreconditions = (message, index = 0) => {
-    if (index >= preconditions.length) {
-      runSubscriptions(message);
-    } else {
-      const precondition = preconditions[index];
-      precondition(message, identity, () => runPreconditions(message, index + 1));
-    }
-  };
+  const subscriptions = createSubscriptions();
+  const preconditions = createPreconditions(
+    identity,
+    (message) => subscriptions.run(message)
+  );
 
   return {
     pre(fn) {
-      preconditions.push(fn);
+      preconditions.add(fn);
     },
     notify(fn) {
-      subscriptions.push(fn);
+      subscriptions.add(fn);
     },
-    sendMail(text) {
-      runPreconditions(text);
+    sendMail(message) {
+      preconditions.run(message);
     }
   };
 };
 
-export const createMailBoxFactory = (keyFn = (k) => k) => (identity) => {
-  const key = keyFn(identity);
+export const createMailBoxFactory = (keyFn = (k) => k) => {
+  const mailboxes = {};
 
-  if (!mailboxes[key]) {
-    mailboxes[key] = createIdentifiedMailbox(identity);
-  }
+  return (identity) => {
+    const key = keyFn(identity);
 
-  return mailboxes[key];
+    if (!mailboxes[key]) {
+      mailboxes[key] = createIdentifiedMailbox(identity);
+    }
+
+    return mailboxes[key];
+  };
 };
