@@ -1,5 +1,3 @@
-const mailboxes = {};
-
 import {createSubscriptions} from './subscriptions';
 import {createPreconditions} from './preconditions';
 
@@ -23,12 +21,17 @@ const createIdentifiedMailbox = (identity) => {
   };
 };
 
-export const createMailBoxFactory = (keyFn = (k) => k) => (identity) => {
-  const key = keyFn(identity);
+export const createMailBoxFactory = (keyFn = (k) => k) => {
+  const mailboxes = {};
 
-  if (!mailboxes[key]) {
-    mailboxes[key] = createIdentifiedMailbox(identity);
-  }
+  return (identity) => {
+    const key = keyFn(identity);
 
-  return mailboxes[key];
-};
+    if (!mailboxes[key]) {
+      mailboxes[key] = createIdentifiedMailbox(identity);
+    }
+
+    return mailboxes[key];
+  };
+}
+
